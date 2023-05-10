@@ -8,6 +8,8 @@ import { UserPhoto } from "@components/UserPhoto";
 import { Input } from "@components/Input";
 import Avatar from '@assets/Avatar.png';
 import { AddsTile } from "@components/AddsTile";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 export function Home() {
     const [adds, setAdds] = useState([
@@ -24,6 +26,12 @@ export function Home() {
           price: '20,00',
         },
       ]);
+
+      const navigation = useNavigation<AppNavigatorRoutesProps>(); 
+
+      function goto(){
+          navigation.navigate('adDetails');
+      }
 
       const [isModalOpen, setIsModalOpen] = useState(false);
       const [isNewAcepted, setIsNewAcepted] = useState(false);
@@ -140,7 +148,7 @@ export function Home() {
             <FlatList
                 data={adds}
                 renderItem={({ item }) => (
-                    <AddsTile title={item.title} price={item.price}/>
+                    <AddsTile title={item.title} price={item.price} onPress={goto}/>
                 )}
                 numColumns={2}
                 keyExtractor={(item, index) => index.toString()}
