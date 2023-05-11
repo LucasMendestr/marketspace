@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { Center, Text } from 'native-base';
+import { Center } from 'native-base';
 
 import { Button } from '@components/Button';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';

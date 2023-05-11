@@ -12,6 +12,17 @@ import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 export function Home() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isNewAcepted, setIsNewAcepted] = useState(false);
+    const [isUsedAcepted, setIsUsedAcepted] = useState(false);
+    const [isTradeAcepted, setIsTradeAcepted] = useState(false);
+    const [isBoletoAcepted, setIsBoletoAcepted] = useState(false);
+    const [isPixAcepted, setIsPixAcepted] = useState(false);
+    const [isCashAcepted, setIsCashAcepted] = useState(false);
+    const [isCredidCardAcepted, setIsCreditCardAcepted] = useState(false);
+    const [isDebitCardAcepted, setIsDebitCardAcepted] = useState(false);
+    const navigation = useNavigation<AppNavigatorRoutesProps>(); 
+
     const [adds, setAdds] = useState([
         {
           title: 'Luminária pendente',
@@ -27,21 +38,11 @@ export function Home() {
         },
       ]);
 
-      const navigation = useNavigation<AppNavigatorRoutesProps>(); 
 
       function goto(){
           navigation.navigate('adDetails');
       }
 
-      const [isModalOpen, setIsModalOpen] = useState(false);
-      const [isNewAcepted, setIsNewAcepted] = useState(false);
-      const [isUsedAcepted, setIsUsedAcepted] = useState(false);
-      const [isTradeAcepted, setIsTradeAcepted] = useState(false);
-      const [isBoletoAcepted, setIsBoletoAcepted] = useState(false);
-      const [isPixAcepted, setIsPixAcepted] = useState(false);
-      const [isCashAcepted, setIsCashAcepted] = useState(false);
-      const [isCredidCardAcepted, setIsCreditCardAcepted] = useState(false);
-      const [isDebitCardAcepted, setIsDebitCardAcepted] = useState(false);
 
       function handleModalOff () {
         setIsModalOpen(false);
@@ -89,14 +90,17 @@ export function Home() {
                         alt="Imagem do usuário"
                         mr={4}
                     />
+
                     <VStack flex={1} alignItems="center" justifyContent="center" ml={-10}>
                         <Text>
                             Boas vindas,
                         </Text>
+
                         <Text>
                             Maria!
                         </Text>
                     </VStack>
+
                     <Button title="+ Criar anuncio" variant={'black'} w={139}/>
                 </HStack>
 
@@ -109,10 +113,12 @@ export function Home() {
                         <Box paddingLeft={2}>
                             <Tag />
                         </Box>
+
                         <VStack flex={1} ml={5}>
                             <Text fontSize={20} fontWeight={"bold"}>4</Text>
                             <Text fontSize={12}>anúncios ativos</Text>
                         </VStack>
+
                         <Pressable paddingRight={2}>
                             <HStack>
                                 <Text paddingRight={2} color={"blue.700"} fontSize={12}>
@@ -145,6 +151,7 @@ export function Home() {
                     }
                 />
             </VStack>
+
             <FlatList
                 data={adds}
                 renderItem={({ item }) => (
@@ -162,6 +169,7 @@ export function Home() {
                             <Text fontSize={20} fontWeight={'bold'} color={'gray.100'}>
                                 Filtrar anúncios
                             </Text>
+
                             <Pressable onPress={handleModalOff}>
                                 <X color="#9F9BA1"/>
                             </Pressable>
@@ -242,11 +250,9 @@ export function Home() {
                             <Button title={"Aplicar filtros"} variant={'black'} w={40}></Button>
                         </HStack>
                         
-
                     </VStack>
                 </Modal.Content>    
             </Modal>
         </VStack>
-        
     );
 }

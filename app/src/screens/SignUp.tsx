@@ -11,7 +11,6 @@ import { Button } from "@components/Button";
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
 
 
-
 export function SignUp() {
     const { control } = useForm();
     const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +29,7 @@ export function SignUp() {
         navigation.navigate('signIn');
     }
 
-    
+
     return (
         <VStack flex={1} bg={"gray.700"}>
             <Center my={8} px={4}>

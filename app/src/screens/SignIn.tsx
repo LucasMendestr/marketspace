@@ -11,7 +11,6 @@ import { Button } from "@components/Button";
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
 
 
-
 export function SignIn() {
     const { control } = useForm();
     const [showPassword, setShowPassword] = useState(false);

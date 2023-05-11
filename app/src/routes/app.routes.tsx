@@ -5,8 +5,6 @@ import { House, Tag, SignOut } from 'phosphor-react-native';
 import { Home } from '@screens/Home';
 import { AdDetails } from '@screens/AdDetails';
 import { AdEdting } from '@screens/AdEdting';
-import { AdPreview } from '@screens/AdPreview';
-import { MyAdDetails } from '@screens/MyAdDetails';
 import { MyAds } from '@screens/MyAds';
 import { SignIn } from '@screens/SignIn';
 
@@ -14,8 +12,6 @@ type AppRoutes = {
   home: undefined;
   adDetails: undefined;
   adEdting: undefined;
-  adPreview: undefined;
-  myAdDetails: undefined;
   myAds: undefined;
   goOut: undefined;
 }
@@ -48,25 +44,19 @@ export function AppRoutes() {
       <Screen 
         name='adDetails'
         component={AdDetails}
-        options={{tabBarButton: () => null}}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: { display: 'none' }
+        }}
       />
 
       <Screen 
         name='adEdting'
         component={AdEdting}
-        options={{tabBarButton: () => null}}
-      />
-
-      <Screen 
-        name='adPreview'
-        component={AdPreview}
-        options={{tabBarButton: () => null}}
-      />
-      
-      <Screen 
-        name='myAdDetails'
-        component={MyAdDetails}
-        options={{tabBarButton: () => null}}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: { display: 'none' }
+        }}
       />
 
       <Screen 
