@@ -1,11 +1,13 @@
-import { Button as ButtonNativeBase, IButtonProps, Text } from 'native-base';
+import { Button as ButtonNativeBase, HStack, IButtonProps, Icon, Text } from 'native-base';
+import { WhatsappLogo, Tag } from 'phosphor-react-native';
 
 type Props = IButtonProps & {
   title: string;
   variant?: 'gray' | 'black' | 'blue';
+  icon?: string;
 }
 
-export function Button({ title, variant = 'gray', ...rest }: Props) {
+export function Button({ title, variant = 'gray', icon, ...rest }: Props) {
     let colorButton;
     let colorButtonPress;
     let colorText;
@@ -45,13 +47,21 @@ export function Button({ title, variant = 'gray', ...rest }: Props) {
       }}
       {...rest}
     >
-      <Text 
-        color={colorText}
-        fontFamily="heading"
-        fontSize="sm"
-      >
-        {title}
-      </Text>
+      <HStack>
+        {icon === 'wapp' ? (
+          <WhatsappLogo color="white" weight="fill" />
+        ) : icon === 'tag' ? (
+          <Tag color="white" weight="fill" />
+        ) : null}
+        <Text 
+          color={colorText}
+          fontFamily="heading"
+          fontSize="sm"
+          ml={2}
+        >
+          {title}
+        </Text>
+      </HStack>
     </ButtonNativeBase>
   );
 }

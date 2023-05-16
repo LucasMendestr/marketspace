@@ -138,6 +138,7 @@ export function Home() {
                     placeholder="Buscar anúncio"
                     type='text'
                     backgroundColor={"white"}
+                    borderWidth={0}
                     InputRightElement={
                         <>
                             <Pressable style={{ paddingRight: 10}}>

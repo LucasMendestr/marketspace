@@ -8,6 +8,7 @@ import { ArrowLeft, Barcode, QrCode, Money, CreditCard, Bank } from 'phosphor-re
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { CarouselTile } from '@components/CarouselTile';
 import User from '@assets/User.png';
+import { Button } from '@components/Button';
 
 const screenWidth= Dimensions.get('window').width;
 const movieData = [
@@ -128,9 +129,14 @@ export function AdDetails() {
       </ScrollView>
       
       <VStack bg="white" shadow={4} h={90} position="absolute" bottom={0} left={0} right={0}>
-        <HStack>
-          <Text>R$</Text>
-          <Text>120,00</Text>
+        <HStack px={8} pt={5} alignItems={'space-between'} justifyContent={'space-between'}>
+          <HStack>
+            <Text>R$</Text>
+            <Text>120,00</Text>
+          </HStack>
+          <Box w={180}>
+            <Button title={'Entrar em contato'} variant={'blue'} icon='wapp'></Button>
+          </Box>
         </HStack>
       </VStack>
     </View>    

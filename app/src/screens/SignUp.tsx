@@ -3,6 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, Box, VStack, Center, Text, Pressable } from 'native-base';
 import { useForm, Controller } from 'react-hook-form'
 import { Eye, EyeSlash, PencilSimpleLine} from 'phosphor-react-native';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import Logo from '@assets/LogoP.png';
 import Avatar from '@assets/Avatar.png';
@@ -10,9 +12,30 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
 
+type FormDataProps = {
+    name: string;
+    email: string;
+    tel: string;
+    password: string;
+    password_confirm: string;
+  }
+
+  const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+  
+  const signUpSchema = yup.object({
+    name: yup.string().required('Informe o nome.'),
+    email: yup.string().required('Informe o e-mail').email('E-mail inválido.'),
+    //tel: yup.string().required('Informe o Telefone').matches(phoneRegExp, 'Phone number is not valid'),
+    password: yup.string().required('Informe a senha').min(6, 'A senha deve ter pelo menos 6 dígitos.'),
+    password_confirm: yup.string().required('Confirme a senha.').oneOf([yup.ref('password')], 'A confirmação da senha não confere')
+  });
+
 
 export function SignUp() {
-    const { control } = useForm();
+    
+    const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
+        resolver: yupResolver(signUpSchema),
+      });
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfrim, setShowPasswordConfirm] = useState(false);  
     const navigation = useNavigation<AuthNavigatorRoutesProps>();  
@@ -25,8 +48,23 @@ export function SignUp() {
         setShowPasswordConfirm(!showPasswordConfrim)
     };    
 
-    function handleNewAccount(){
+    function handleGoBack(){
         navigation.navigate('signIn');
+    }
+
+    function handleSignUp({ name, email, password, tel }: FormDataProps) {
+        const avav = 'none';
+        console.log({ name, email, password, tel, avav})
+        fetch('http://192.168.0.58:3333/users', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ avav, name, email, tel, password })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data));
     }
 
 
@@ -72,7 +110,6 @@ export function SignUp() {
                 <Controller 
                     control={control}
                     name="name"
-                    rules={{required: 'Informe o nome'}}
                     render={({ field: { onChange }}) => (
                         <Input
                             placeholder="Nome"
@@ -81,10 +118,11 @@ export function SignUp() {
                     )}
                 />
 
+                <Text color="red.500">{errors.name?.message}</Text>
+
                 <Controller 
                     control={control}
                     name="email"
-                    rules={{required: 'Informe o e-mail'}}
                     render={({ field: { onChange }}) => (
                         <Input
                             placeholder="E-mail"
@@ -97,8 +135,7 @@ export function SignUp() {
 
                 <Controller 
                     control={control}
-                    name="phone"
-                    rules={{required: 'Informe o telefone'}}
+                    name="tel"
                     render={({ field: { onChange }}) => (
                         <Input
                             placeholder="Telefone"
@@ -111,7 +148,6 @@ export function SignUp() {
                 <Controller 
                     control={control}
                     name="password"
-                    rules={{required: 'Informe a senha'}}
                     render={({ field: { onChange }}) => (
                         <Input
                             placeholder="Senha"
@@ -130,13 +166,14 @@ export function SignUp() {
                 <Controller 
                     control={control}
                     name="password_confirm"
-                    rules={{required: 'Informe a senha'}}
                     render={({ field: { onChange }}) => (
                         <Input
                             placeholder="Confirme a Senha"
                             secureTextEntry={!showPasswordConfrim}
                             onChangeText={onChange}
                             type={showPasswordConfrim ? 'text' : 'password'}
+                            onSubmitEditing={handleSubmit(handleSignUp)}
+                            returnKeyType="send"
                             InputRightElement={
                                 <Pressable  onPress={toggleShowPasswordConfirm} style={{paddingRight: 10}}>
                                     {showPasswordConfrim ? <Eye /> : <EyeSlash/>}
@@ -146,7 +183,12 @@ export function SignUp() {
                     )}
                 />                
 
-                <Button title={"Criar"} variant={'black'} marginTop={10}/>
+                <Button 
+                    title={"Criar"} 
+                    variant={'black'} 
+                    marginTop={10}
+                    onPress={handleSubmit(handleSignUp)}
+                />
 
                 <Text fontSize={14} color={"gray.300"} marginTop={10}>
                     Já tem um conta?
@@ -156,7 +198,7 @@ export function SignUp() {
                     title={"Ir para o login"} 
                     variant={'gray'} 
                     marginTop={2}
-                    onPress={handleNewAccount}
+                    onPress={handleGoBack}
                 />
 
             </Center>
