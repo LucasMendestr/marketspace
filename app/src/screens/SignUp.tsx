@@ -1,11 +1,16 @@
+import { Alert } from 'react-native';
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Image, Box, VStack, Center, Text, Pressable } from 'native-base';
 import { useForm, Controller } from 'react-hook-form'
 import { Eye, EyeSlash, PencilSimpleLine} from 'phosphor-react-native';
 import * as yup from 'yup';
+import * as ImagePicker from 'expo-image-picker';
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
+import * as FileSystem from 'expo-file-system';
 
+import { api } from "@services/api";
 import Logo from '@assets/LogoP.png';
 import Avatar from '@assets/Avatar.png';
 import { Input } from "@components/Input";
@@ -32,13 +37,13 @@ type FormDataProps = {
 
 
 export function SignUp() {
-    
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema),
       });
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfrim, setShowPasswordConfirm] = useState(false);  
     const navigation = useNavigation<AuthNavigatorRoutesProps>();  
+    const [uri, setUri] = useState<string>();
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword)
@@ -52,19 +57,56 @@ export function SignUp() {
         navigation.navigate('signIn');
     }
 
-    function handleSignUp({ name, email, password, tel }: FormDataProps) {
-        const avav = 'none';
-        console.log({ name, email, password, tel, avav})
-        fetch('http://192.168.0.58:3333/users', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ avav, name, email, tel, password })
-        })
-        .then(response => response.json())
-        .then(data => console.log(data));
+    
+    async function handleSignUp({ name, email, password, tel }: FormDataProps) {
+        const userForm = new FormData();
+        if (uri) {
+            console.log(uri);
+            userForm.append('avatar', uri);
+          }
+        userForm.append('name', name);
+        userForm.append('email', email);
+        userForm.append('password', password);
+        userForm.append('tel', tel);
+
+        try {
+            console.log(userForm);
+            const response = await api.patch('/users', userForm, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              });
+
+
+            // const response = await api.post('/users', userForm);
+            console.log(response.data);
+          } catch (error) {
+            if(axios.isAxiosError(error)) {
+              Alert.alert(error.response?.data.message);
+            }
+          }
+    }
+
+    async function handleUserPhotoSelected(){
+        try{
+            const photoSelected = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1,
+                aspect: [4, 4],
+                allowsEditing: true,
+              });
+          
+              if(photoSelected.canceled) {
+                return;
+              }
+              if(photoSelected.assets[0].uri) {
+                setUri(photoSelected.assets[0].uri);
+                }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            // setPhotoIsLoading(false)
+        }
     }
 
 
@@ -86,26 +128,28 @@ export function SignUp() {
                    Crie sua conta e use o espaço para comprar itens variados e vender seus produtos
                 </Text>
 
-                <Box position='relative' marginBottom={5}>
-                    <Image
+                <Pressable onPress={handleUserPhotoSelected}>
+                    <Box position='relative' marginBottom={5}>
+                        <Image
                         source={Avatar}
                         alt="Avatar"
                         w={88} 
                         h={88}
                         borderRadius='full'
-                    />
-                    <Pressable 
-                        onPress={() => { /* ação ao clicar */ }}
+                        />
+                        <Pressable 
+                        onPress={() => {handleUserPhotoSelected}}
                         position='absolute'
                         bottom={0}
                         right={0}
                         p={2}
                         bg="blue.500"
                         borderRadius='full'
-                    >
+                        >
                         <PencilSimpleLine color="white"/>
-                    </Pressable >
-                </Box>          
+                        </Pressable>
+                    </Box>
+                    </Pressable>       
 
                 <Controller 
                     control={control}
@@ -172,7 +216,6 @@ export function SignUp() {
                             secureTextEntry={!showPasswordConfrim}
                             onChangeText={onChange}
                             type={showPasswordConfrim ? 'text' : 'password'}
-                            onSubmitEditing={handleSubmit(handleSignUp)}
                             returnKeyType="send"
                             InputRightElement={
                                 <Pressable  onPress={toggleShowPasswordConfirm} style={{paddingRight: 10}}>
